@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "922469794505",
+    "project_id": "ventacha-a5089",
+    "storage_bucket": "ventacha-a5089.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:922469794505:android:24de423bc64bf028c4c318",
+        "android_client_info": {
+          "package_name": "com.aminou_zakara.ventacha"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "922469794505-hoqp69u2hp3a1csas5irc4sev296uiql.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.aminou_zakara.ventacha",
+            "certificate_hash": "950a238727c188da00ae0d1c4e6c9f855657cf7e"
+          }
+        },
+        {
+          "client_id": "922469794505-q4dv9me5677kfrhk2oin5n5emk8397dh.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB469EJHjikA-L9Cma8_euyjDAsEvlKUJg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "922469794505-q4dv9me5677kfrhk2oin5n5emk8397dh.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
