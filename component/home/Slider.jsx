@@ -55,9 +55,12 @@ const Slider = ({ sliderList }) => {
                   style={{fontWeight:"600"}}
                   >{item.title}</Text>
                   
-                  <Text 
-                  style={{color:"grey", fontSize:13, marginTop:5 
-                  }}>{item.description} </Text>
+                  <Text  
+                  numberOfLines={7}
+                  ellipsizeMode="tail"
+                  style={{color:"grey", fontSize:13, marginTop:5, }}>
+                    {item.description} 
+                    </Text>
 
                   <Text 
                   style={{fontWeight:"900", fontSize:16, marginTop:10 

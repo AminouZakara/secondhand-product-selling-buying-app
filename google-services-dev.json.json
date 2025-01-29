@@ -1,0 +1,114 @@
+{
+  "project_info": {
+    "project_number": "954218532580",
+    "project_id": "compagnies-48f05",
+    "storage_bucket": "compagnies-48f05.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:954218532580:android:91d431a8a81a9ebeab66f1",
+        "android_client_info": {
+          "package_name": "com.aminou_zakara.macompagnie"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "954218532580-0etrhdh5fkuml0eea5p1sgt8qdlhq9v2.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.aminou_zakara.macompagnie",
+            "certificate_hash": "6e40bdc8f8d75d5b2565e9506083a7a7cf273fab"
+          }
+        },
+        {
+          "client_id": "954218532580-imq4f6u0gc9ja17ojk73q36cpvgfebmj.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.aminou_zakara.macompagnie",
+            "certificate_hash": "a77beb7475f372252b59a0224b15676d944ca18b"
+          }
+        },
+        {
+          "client_id": "954218532580-igmq7nn8kntfgl86q3vnv4hvoh8hhvjl.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBMdEF4DhlDmvLCHez3s2GEc_YiNFpP2pQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "954218532580-igmq7nn8kntfgl86q3vnv4hvoh8hhvjl.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "954218532580-ecl0dnolialqqfo71999glfg0ukre1af.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.aminou-zakara.macompagnie"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:954218532580:android:e596fbd01fce7501ab66f1",
+        "android_client_info": {
+          "package_name": "com.aminou_zakara.ventacha"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "954218532580-85h6j1atl25eov200i7hfajt69rgdhhv.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.aminou_zakara.ventacha",
+            "certificate_hash": "a308303b05aa624eb48c114626bf76aff561833f"
+          }
+        },
+        {
+          "client_id": "954218532580-nq88vs8ghtp19510h7l5oec2mqv4j3f8.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.aminou_zakara.ventacha",
+            "certificate_hash": "09ae069bca5a6b45089b6a72025d2552c1a1bc8b"
+          }
+        },
+        {
+          "client_id": "954218532580-igmq7nn8kntfgl86q3vnv4hvoh8hhvjl.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBMdEF4DhlDmvLCHez3s2GEc_YiNFpP2pQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "954218532580-igmq7nn8kntfgl86q3vnv4hvoh8hhvjl.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "954218532580-ecl0dnolialqqfo71999glfg0ukre1af.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.aminou-zakara.macompagnie"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

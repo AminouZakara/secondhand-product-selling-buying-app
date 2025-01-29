@@ -12,7 +12,7 @@ const Login = () => {
     const [userAuth, setUserAuth] = useState(null)
     const db = getFirestore(app)
     GoogleSignin.configure({
-        webClientId: "922469794505-q4dv9me5677kfrhk2oin5n5emk8397dh.apps.googleusercontent.com"
+        webClientId: process.env.NEXT_PUBLIC_FIREBASE_WEB_CLIENT_ID
     });
 
     //---- SignInWithGoogle ---- react native expo google login and save user data in firebase

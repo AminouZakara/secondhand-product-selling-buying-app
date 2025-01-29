@@ -6,13 +6,17 @@
   "build": {
     "development": {
       "developmentClient": true,
-      "distribution": "internal"
-    },
-    "preview": {
-      "distribution": "internal"
+      "distribution": "internal",
+      "env": {
+        "ENVFILE": ".env"
+      }
     },
     "production": {
-      "autoIncrement": true
+      "developmentClient": false,
+      "distribution": "store",
+      "env": {
+        "ENVFILE": ".env.production"
+      }
     }
   },
   "submit": {

@@ -12,6 +12,7 @@ import AntDesign from '@expo/vector-icons/AntDesign';
 import auth from '@react-native-firebase/auth';
 import AppLoader from '../../component/home/AppLoader';
 
+import { NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN } from '@env';
 
 
 
@@ -29,6 +30,9 @@ const HomeScreen = () => {
       },
     });
   }, [navigation]);
+
+  console.log('NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN:', NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN);
+
   const [isLoading, setIsLoading] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false)
   const db = getFirestore(app);
@@ -54,11 +58,18 @@ const HomeScreen = () => {
     setSliderList([])
     setIsLoading(true)
     try {
-      const querySnapshot = await getDocs(collection(db, "ventachaSliderPost"), orderBy("createdAt", "desc"));
-      querySnapshot.forEach((doc) => {
-        setSliderList((prev) => [...prev, { id: doc.id, ...doc.data() }]);
-      });
-      setIsLoading(false)
+      setSliderList([])
+      const unsub = onSnapshot(query(collection(db, 'ventachaSliderPost'), where('status', '==', 'active')),
+        (querySnapshot) => {
+          const go = [];
+          querySnapshot.forEach((doc) => {
+            go.push({ id: doc.id, ...doc.data() });
+          });
+          setSliderList(go);
+          setIsLoading(false)
+        }
+      );
+      return () => unsub();
     } catch (error) {
       console.log(error);
     }
@@ -89,7 +100,7 @@ const HomeScreen = () => {
     setIsLoading(true)
     try {
       setLatestPostList([])
-      const unsub = onSnapshot(query(collection(db, 'ventachaUserPost'), where('status', '==', 'accepted'), orderBy("createdAt", "desc")),
+      const unsub = onSnapshot(query(collection(db, 'ventachaUserPost'), where('status', '==', 'accepted')),
         (querySnapshot) => {
           const go = [];
           querySnapshot.forEach((doc) => {
@@ -105,7 +116,7 @@ const HomeScreen = () => {
       setIsLoading(false)
     }
   }
-  console.log("Ventacha Latest Post", latestPostList.length)
+  //console.log("Ventacha Latest Post", latestPostList.length)
 
   //get user data from firestore
   const [userData, setUserData] = useState([])
@@ -125,7 +136,7 @@ const HomeScreen = () => {
       setIsLoading(false)
     }
   }
-  console.log("User role: ", userData.role)
+  // console.log("User role: ", userData.role)
   {/* Used to get user data end */ }
   // get ventachaUserPosts from firestore where status is 'pending'
   const [pendingPosts, setPendingPosts] = useState([])
@@ -148,7 +159,7 @@ const HomeScreen = () => {
       console.error(error);
     }
   }
-  console.log("Pending Posts", pendingPosts.length);
+  //console.log("Pending Posts", pendingPosts.length);
 
 
 

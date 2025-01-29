@@ -1,6 +1,6 @@
 import { ActivityIndicator, Alert, Image, KeyboardAvoidingView, ScrollView, StyleSheet, Text, TextInput, ToastAndroid, TouchableOpacity, View } from 'react-native'
 import React, { useEffect, useState } from 'react'
-import { addDoc, getFirestore } from "firebase/firestore";
+import { addDoc, getFirestore, updateDoc, doc, where, query } from "firebase/firestore";
 import { collection, getDocs } from "firebase/firestore";
 import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
 import { Formik } from 'formik';
@@ -8,17 +8,59 @@ import { Picker } from '@react-native-picker/picker';
 import * as ImagePicker from 'expo-image-picker';
 import { app } from '../../firebaseConfig';
 import auth from '@react-native-firebase/auth';
+import { useNavigation, useRoute } from '@react-navigation/native';
+
 
 const CreateNewSlider = () => {
     const user = auth().currentUser;
+    const navigation = useNavigation();
+    const route = useRoute();
+    const post = route.params?.post;
+    {
+        post ? (
+            console.log("Post", post),
+            console.log("Post id", post.id)
+        ) : (
+            console.log("No route post")
+        )
+    }
+
     const [isLoading, setIsLoading] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false)
     const db = getFirestore(app);
-    {/* Used to get ventachaCategory */ }
-    const [ventachaCategoryList, setVentaCategoryList] = useState([])
+    // USeEffect
     useEffect(() => {
         getVentachaCategoryList();
+        getUserData();
+        getAddress();
+
     }, [])
+
+
+    {/* Used to get user data from firestore end */ }
+    const [userData, setUserData] = useState([])
+    const getUserData = async () => {
+        setUserData([])
+        setIsLoading(true)
+        try {
+            const q = query(collection(db, "ventachaUsers"), where("userId", "==", user.uid));
+            const querySnapshot = await getDocs(q);
+            querySnapshot.forEach((doc) => {
+                // doc.data() is never undefined for query doc snapshots.
+                setUserData(doc.data());
+            });
+            setIsLoading(false)
+        } catch (error) {
+            console.log("Oops! cannot get user data: ", error)
+            setIsLoading(false)
+        }
+    }
+    console.log("User Data from CreateNewPost: ", userData.phoneNumber)
+    {/* Used to get user data end */ }
+
+    {/* Used to get ventachaCategory */ }
+    const [ventachaCategoryList, setVentaCategoryList] = useState([])
+
     const getVentachaCategoryList = async () => {
         setIsLoading(true)
         try {
@@ -35,14 +77,11 @@ const CreateNewSlider = () => {
         }
 
     }
-    console.log("Ventacha Category List: ", ventachaCategoryList)
+    //console.log("Ventacha Category List: ", ventachaCategoryList)
     {/* Used to get ventachaCategory end */ }
-  {/* Used to get Address*/ }
+    {/* Used to get Address*/ }
     // get Address from firestore in the collection of "ventachaAddress"
     const [addressList, setAddressList] = useState([]);
-    useEffect(() => {
-        getAddress()
-    }, [])
     const getAddress = async () => {
         setIsLoading(true)
         try {
@@ -57,7 +96,7 @@ const CreateNewSlider = () => {
             setIsLoading(false)
         }
     }
-   // console.log("These are the current Addresses: ", addressList);
+    // console.log("These are the current Addresses: ", addressList);
 
     {/* Used to get Address end */ }
 
@@ -81,35 +120,97 @@ const CreateNewSlider = () => {
         }
     };
     {/* Used to pick image end */ }
+    console.log("params", route.params);
 
     const onSubmitMethod = async (value) => {
         setIsSubmitting(true)
-        value.image = image;
-        // convert image url to a blob file 
-        {/*
-            const blob = await fetch(value.image).then(res => res.blob());
-                */ }
-        const resp = await fetch(value.image);
-        const blob = await resp.blob();
-        //store the blob file in the database
-        const storage = getStorage();
-        const storageRef = ref(storage, 'ventachaSlider/' + Date.now() + ".jpg");
-        uploadBytes(storageRef, blob).then((snapshot) => {
-            console.log('Uploaded a blob or file!');
+        //if route.params .id is not null, then it is an edit
+        if (route.params) {
+            try {
+                const docRef = doc(db, "ventachaSliderPost", route.params.id);
+                await updateDoc(docRef, {
+                    ...post,
+                    status: "active",
+                    title: value.title,
+                    price: value.price,
+                    address: value.address,
+                    category: value.category,
+                    description: value.description,
+                    editedAt: new Date(),
+                });
+                console.log("Document updated");
+                setIsSubmitting(false)
+                Alert.alert(
+                    "Slider Post Updated",
+                    "Your slider post has been updated successfully",
+                    [
+                        {
+                            text: "OK",
+                            onPress: () => navigation.goBack(),
 
-        }).then((resp) => {
-            getDownloadURL(storageRef).then(async (downloadURL) => {
-                value.image = downloadURL;
-                console.log("Download URL: ", downloadURL);
-                //update the database with the download URL
-                const docRef = addDoc(collection(db, "ventachaSliderPost"), value)
-                    .then((docRef) => {
-                        console.log("Document written with ID: ", docRef.id);
-                        setIsSubmitting(false)
-                        Alert.alert("Success", " Your Slider post has been uploaded successfully");
+                        }
+                    ]
+                );
+                // alert("Document updated");
+            }
+            catch (error) {
+                console.log(error);
+                setIsSubmitting(false)
+            }
+        } else {
+            try {
+                value.image = image;
+                // convert image url to a blob file 
+                {/*
+                    const blob = await fetch(value.image).then(res => res.blob());
+                        */ }
+                const resp = await fetch(value.image);
+                const blob = await resp.blob();
+                //store the blob file in the database
+                const storage = getStorage();
+                const storageRef = ref(storage, 'ventachaSlider/' + Date.now() + ".jpg");
+                uploadBytes(storageRef, blob).then((snapshot) => {
+                    console.log('Uploaded a blob or file!');
+
+                }).then((resp) => {
+                    getDownloadURL(storageRef).then(async (downloadURL) => {
+                        value.image = downloadURL;
+                        console.log("Download URL: ", downloadURL);
+                        //update the database with the download URL
+                        const docRef = addDoc(collection(db, "ventachaSliderPost"), value)
+                            .then((docRef) => {
+                                console.log("Document written with ID: ", docRef.id);
+                                setIsSubmitting(false)
+                                setImage(null)
+                                Alert.alert(
+                                    "Success",
+                                    "Your Slider post has been uploaded successfully! Would you like to add another one?",
+                                    [
+
+                                        {
+                                            text: 'Oui', onPress: () => console.log("Your Slider post has been uploaded successfully!")
+                                        },
+                                        {
+                                            text: 'Non', onPress: () => {
+
+                                                navigation.navigate("Main");
+                                                console.log("Your Slider post has been uploaded successfully!")
+                                            }
+                                        }
+
+                                    ]
+
+                                );
+
+                            })
                     })
-            })
-        })
+                })
+            } catch (error) {
+                console.log(error);
+                setIsSubmitting(false)
+            }
+        }
+
 
     }
     {/* 
@@ -157,20 +258,42 @@ const CreateNewSlider = () => {
                 ) : (
                     <View style={{ padding: 10 }}>
                         <Formik
-                            initialValues={{ title: '', description: '', price: '', address: '', category: '', image: '', userName: user.displayName, userEmail: user.email, userImage: user.photoURL, userId: user.uid, createdAt: Date.now() }}
+                            initialValues={{
+                                status: "active",
+                                title: post ? post.title : '',
+                                description: post ? post.description : '',
+                                price: post ? post.price : '',
+                                address: post ? post.address : '',
+                                category: post ? post.category : '',
+                                image: post ? post.image : '',
+                                userName: user.displayName,
+                                userEmail: user.email,
+                                phoneNumber: userData?.phoneNumber ? userData?.phoneNumber : '',
+                                userImage: user.photoURL,
+                                userId: user.uid,
+                                createdAt: Date.now()
+                            }}
                             onSubmit={(value => onSubmitMethod(value))}
                         >
                             {({ handleChange, handleBlur, handleSubmit, values, setFieldValue, errors }) => (
                                 <View style={{ padding: 10 }}>
                                     {/*Image Picker*/}
-                                    <TouchableOpacity onPress={pickImage}>
-                                        {image ?
-                                            <Image source={{ uri: image }} style={styles.image} /> : <Image
-                                                source={require("../../assets/images/placeholder.jpg")}
-                                                style={styles.image}
-                                            />}
+                                    {
+                                        post ? (
+                                            <Image source={{ uri: post.image }} style={styles.image} />
 
-                                    </TouchableOpacity>
+                                        ) : (
+                                            <TouchableOpacity onPress={pickImage}>
+                                                {image ?
+                                                    <Image source={{ uri: image }} style={styles.image} /> : <Image
+                                                        source={require("../../assets/images/placeholder.jpg")}
+                                                        style={styles.image}
+                                                    />}
+
+                                            </TouchableOpacity>
+                                        )
+                                    }
+
                                     <TextInput
                                         style={styles.input}
                                         placeholder="Title"
@@ -179,11 +302,11 @@ const CreateNewSlider = () => {
                                         value={values?.title}
                                     />
                                     <TextInput
-                                        style={styles.input}
+                                        style={[styles.input, { height: 150, textAlignVertical: "top" }]}
                                         placeholder="Description"
                                         onChangeText={handleChange('description')}
                                         onBlur={handleBlur('description')}
-                                        numberOfLines={4}
+                                        multiline
                                         value={values?.description}
                                     />
                                     <TextInput
@@ -194,7 +317,7 @@ const CreateNewSlider = () => {
                                         onBlur={handleBlur('price')}
                                         value={values?.price}
                                     />
-                                  
+
                                     {/*Ventacha Category Dropdown List with picker*/}
                                     <Picker
                                         selectedValue={values?.category}
@@ -217,21 +340,42 @@ const CreateNewSlider = () => {
                                         ))}
                                     </Picker>
 
-                                    <TouchableOpacity
-                                        style={{
-                                            backgroundColor: '#4CAF50',
-                                            padding: isSubmitting ? 8 : 13,
-                                            borderRadius: 10,
-                                        }}
-                                        onPress={handleSubmit}
-                                        disabled={isSubmitting}
-                                    >
-                                        {
-                                            isSubmitting ?
-                                                <ActivityIndicator size="large" color='#fff' /> :
-                                                <Text style={styles.buttonText}>Submit</Text>
-                                        }
-                                    </TouchableOpacity>
+                                    {
+                                        route.params ? (
+                                            <TouchableOpacity
+                                                style={{
+                                                    backgroundColor: '#4CAF50',
+                                                    padding: isSubmitting ? 8 : 13,
+                                                    borderRadius: 10,
+                                                }}
+                                                onPress={handleSubmit}
+                                                disabled={isSubmitting}
+                                            >
+                                                {
+                                                    isSubmitting ?
+                                                        <ActivityIndicator size="large" color='#fff' /> :
+                                                        <Text style={styles.buttonText}>Update</Text>
+                                                }
+                                            </TouchableOpacity>
+                                        ) : (
+                                            <TouchableOpacity
+                                                style={{
+                                                    backgroundColor: '#4CAF50',
+                                                    padding: isSubmitting ? 8 : 13,
+                                                    borderRadius: 10,
+                                                }}
+                                                onPress={handleSubmit}
+                                                disabled={isSubmitting}
+                                            >
+                                                {
+                                                    isSubmitting ?
+                                                        <ActivityIndicator size="large" color='#fff' /> :
+                                                        <Text style={styles.buttonText}>Submit</Text>
+                                                }
+                                            </TouchableOpacity>
+                                        )
+                                    }
+
 
                                 </View>
                             )}
@@ -252,6 +396,7 @@ const styles = StyleSheet.create({
     image: {
         width: 140,
         height: 140,
+        resizeMode: "contain",
         borderRadius: 15
 
     },

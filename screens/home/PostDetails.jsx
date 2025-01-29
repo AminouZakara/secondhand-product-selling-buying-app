@@ -51,7 +51,7 @@ const PostDetails = () => {
     }
     console.log("Product title:", product.title);
     console.log("Product title:", product.price);
-    
+
     //sendEmailMessage
     const sendEmailMessage = () => {
         const Subject = "Regarding " + product.title;
@@ -218,7 +218,7 @@ const PostDetails = () => {
     const NoPhoneNumber = () => {
         Alert.alert(
             "No Phone Number",
-            "You can only message this person",
+            "This product does not have a phone number",
             [
                 {
                     text: "OK",
@@ -239,7 +239,7 @@ const PostDetails = () => {
                 ) : (
                     <ScrollView
                         showsVerticalScrollIndicator={false}
-                        >
+                    >
                         <Image
                             source={{ uri: product.image }}
                             style={styles.image} />
@@ -311,6 +311,9 @@ const PostDetails = () => {
                                 <Text> {product?.userName} </Text>
                                 <Text> {product?.userEmail} </Text>
                             </View>
+
+                            {/* ------ edit post OR send message to user -----*/}
+
                             {
                                 product?.userId === user?.uid ? (
                                     // edit post
@@ -329,9 +332,21 @@ const PostDetails = () => {
 
                                 ) : (
                                     // send message to user
-                                    <TouchableOpacity onPress={message}>
-                                        <MaterialCommunityIcons name="message-processing-outline" size={40} color="white" />
-                                    </TouchableOpacity>
+                                    <View>
+                                        {
+                                            product?.phoneNumber ? (
+                                                <TouchableOpacity onPress={message}>
+                                                    <MaterialCommunityIcons name="message-processing-outline" size={40} color="white" />
+                                                </TouchableOpacity>
+                                            ) : (
+                                                <TouchableOpacity onPress={NoPhoneNumber}>
+                                                    <MaterialCommunityIcons name="message-processing-outline" size={40} color="white" />
+                                                </TouchableOpacity>
+                                            )
+
+                                        }
+                                    </View>
+
                                 )
                             }
 
@@ -339,9 +354,10 @@ const PostDetails = () => {
 
 
                         </View>
+                        {/* ----- Mark the post as sold not deleteUserPost 0r  make a call --- */}
                         {
                             product?.userId === user?.uid ? (
-                                // Mark the post as sold not deleteUserPost
+
                                 <TouchableOpacity
                                     onPress={soldProduct}
                                     style={{
@@ -353,22 +369,22 @@ const PostDetails = () => {
                                         padding: 10,
 
                                     }}>
-                                        {
-                                            isSelling ? (
-                                                <ActivityIndicator size="small" color="white" />
-                                                
-                                                ) : (
-                                                    <Text style={{
-                                                        color: "white",
-                                                        fontSize: 15,
-                                                        fontWeight: "600"
-                                                    }}>Mark as Sold</Text>
-                                                    )
-                                        }
-                                  
+                                    {
+                                        isSelling ? (
+                                            <ActivityIndicator size="small" color="white" />
+
+                                        ) : (
+                                            <Text style={{
+                                                color: "white",
+                                                fontSize: 15,
+                                                fontWeight: "600"
+                                            }}>Mark as Sold</Text>
+                                        )
+                                    }
+
                                 </TouchableOpacity>
                             ) : (
-                                // pick the user phone number from the userData and make a call
+
                                 <TouchableOpacity
 
                                 >
@@ -434,7 +450,7 @@ const styles = StyleSheet.create({
     image: {
         width: "100%",
         height: 290,
-        resizeMode:"contain",
+        resizeMode: "contain",
 
     },
 })
